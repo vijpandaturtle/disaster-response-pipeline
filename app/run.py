@@ -39,13 +39,32 @@ model = joblib.load("../models/your_model_name.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Plotting of Categories Distribution in Direct Genre
+    direct_category = df[df.genre == 'direct']
+    direct_category_counts = (direct_category.mean()*direct_category.shape[0]).sort_values(ascending=False)
+    direct_category_names = list(direct_category_counts.index)
+    
+    # Plotting of Categories Distribution in News Genre
+    news_category = df[df.genre == 'news']
+    news_category_counts = (news_category.mean()*news_category.shape[0]).sort_values(ascending=False)
+    news_category_names = list(news_category_counts.index)
+
+    # Message length distribution 
+    word_counts = pd.Series([len(item) for item in df['message']]).value_counts()
+    word_counts = dict(sorted(word_counts.items()))
+    counts = word_counts.copy()
+    for key, value in counts.items():
+          if value <= 10:
+            del word_counts[key]
+    
+    
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
+        #Number of messages in each genre
         {
             'data': [
                 Bar(
@@ -56,6 +75,45 @@ def index():
 
             'layout': {
                 'title': 'Distribution of Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+        
+        #Distribution of message genres in direct messages
+        {
+            'data': [
+                Bar(
+                    x=direct_category_names,
+                    y=direct_category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Genres in Direct Messages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        }
+        #Distribution of messages in news messages
+        {
+            'data': [
+                Bar(
+                    x=news_category_names,
+                    y=news_category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Genres in News Messages',
                 'yaxis': {
                     'title': "Count"
                 },
