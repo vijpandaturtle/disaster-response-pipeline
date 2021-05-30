@@ -2,15 +2,39 @@ import sys
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    categories = pd.read_csv(categories_filepath)
+    messages = pd.read_csv(messages_filepath)
+    #merge datasets 
+    df = messages.merge(categories, on='id', how='inner')
+    #create a dataframe of category columns 
+    categories = df['categories'].str.split(';', expand=True)
+    #select first row of categories 
+    row = categories.iloc[0,:]
+    #slice column names 
+    category_names = row.apply(lambda x:x[:-2])
+    #rename categories 
+    categories.columns = category_names 
+    #Convert category to 0 and 1
+    for column in categories:
+        categories[column] = categories[column].str[-1]
+        categories[column] = categories[column].astype(int)
+    categories.replace(2,1,inplace=True)
+    #drop original column from df
+    df.drop('categories', axis=1, inplace=True)
+    #concatenate original df to categories df
+    df = pd.concat([df, categories], axis=1)
+    return df
 
 
 def clean_data(df):
-    pass
+    #drop duplicates 
+    df = df.drop_duplicates()
+    return df
 
 
 def save_data(df, database_filename):
-    pass  
+    engine = create_engine('sqlite:///'+database_filename)
+    df.to_sql('DisasterResponse', engine, if_exists='replace', index=False)
 
 
 def main():
