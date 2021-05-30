@@ -1,4 +1,15 @@
 # Disaster Response Pipeline Project
+The aim of the project is to classify the different types of messages received during disasters into specific categories using classical machine learning models. This way it becomes easy to segregate the messages into correct categories and send it across to different teams on-site so that they can get help the victims in an efficient manner. 
+
+### Dependencies 
+1. NLTK
+2. Numpy 
+3. Pandas 
+4. SQLAlchemy
+5. Scikit-learn
+6. Regex 
+7. Pickle 
+
 
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
